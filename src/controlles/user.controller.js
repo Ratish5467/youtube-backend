@@ -124,7 +124,7 @@ const loginuser=asyncHandler(async (req,res)=>{
   )
 })
 
-const logOutUser=asyncHandler(async (req,res)=>{
+const logoutuser=asyncHandler(async (req,res)=>{
    await User.findOneAndUpdate(
     req.user._id,
     {
@@ -147,7 +147,7 @@ const logOutUser=asyncHandler(async (req,res)=>{
     new ApiResponse(200,{},"User logout succesfully")
   )
 })
-export default {
+export {
   registeruser,
   loginuser,
-logOutUser};
+logoutuser};
