@@ -5,22 +5,21 @@ import { uploadOnCloundinary } from "../utils/cloudinary.js";
 import {ApiResponse} from ".././utils/ApiResponse.js"; 
 
 
-const generateAccessAndRefreshToken=async function(userid){
+const generateAccessAndRefreshToken = async(userId) =>{
     try {
-      const user=User.findById(userid);
-      const accessToken=generateAccessToken();
-      const refreshToken=generateRefreshToken();
+        const user = await User.findById(userId)
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
 
-      user.refreshToken=refreshToken
-      await user.save({
-        validateBeforeSave:false
-      })
+        user.refreshToken = refreshToken
+        await user.save({ validateBeforeSave: false })
+
+        return {accessToken, refreshToken}
+
 
     } catch (error) {
-      throw new ApiError(500,"Something went wrong while generating refresh and access token");
+        throw new ApiError(500, "Something went wrong while generating referesh and access token")
     }
-
-    return {accessToken,refreshToken};
 }
 
 
@@ -88,20 +87,19 @@ const registeruser=asyncHandler( async (req,res)=>{
 })
 
 const loginuser=asyncHandler(async (req,res)=>{
-  const {username,email,password}=req.body;
-  if(!username || email){
+  const {userName,email,password}=req.body;
+  if(!(userName || email)){
      throw new ApiError(400,"username or email is required");
   }
   
-  const user=User.findOne({
-    $or:[{username},{email}]
+  const user=await User.findOne({
+    $or:[{userName},{email}]
   })
 
   if(!user){
     throw new ApiError(400,"User doesn't exists");
   }
-
-  const isPasswordValid=await user.isPasswordCorrect(password);
+  const isPasswordValid= await user.isPasswordCorrect(password);
 
   if(!isPasswordValid){
       throw new ApiError(400,"Password is incorrrect")

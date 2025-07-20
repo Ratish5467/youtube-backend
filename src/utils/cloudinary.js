@@ -1,5 +1,5 @@
  import {v2 as cloudinary} from "cloudinary"
- import fs from "fs"
+ import fs from "fs/promises"
 
 
  cloudinary.config({ 
@@ -16,10 +16,10 @@
                 resource_type:"auto"
             })
             console.log('Fileuploaded succesfully on cloudinary');
-            console.log(respone.url);
+            await fs.unlink(localFilePath);
             return respone;
     } catch (error) {
-        fs.unlink(localFilePath);
+        await fs.unlink(localFilePath);
         return null;
     }
    }
